@@ -4,7 +4,7 @@ using UnityEngine;
 namespace BHSCamp
 {
     //компонент, отвечающий за здоровье сущности
-    public class Health : MonoBehaviour, IDamageable
+    public class Health : MonoBehaviour, IDamageable, IHealable
     {
         public event Action OnDeath; //событие, вызываемое при смерти
         public event Action<int> OnDamageTaken; //событие, вызываемое при получении урона
