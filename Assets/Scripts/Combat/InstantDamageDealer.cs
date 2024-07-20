@@ -9,6 +9,7 @@ namespace BHSCamp
         [SerializeField] private int _instantDamage;
         [SerializeField] private bool _knockbackApplied;
         [SerializeField] private float _knockbackForce;
+        private int _multiplier;
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
@@ -29,6 +30,7 @@ namespace BHSCamp
             // если объект, с которым произошла коллизия, не имеет компонент IDamageable,
             //ничего не делаем
             if (damageable == null) return; 
+            if (_multiplier == 0) _multiplier = 1;
 
             MonoBehaviour mb = (MonoBehaviour)damageable;
             if (_knockbackApplied)
@@ -38,14 +40,19 @@ namespace BHSCamp
                 Vector2 knockbackDirection = Vector2.up;
                 ApplyKnockback(rb, knockbackDirection, _knockbackForce);
             }
-            damageable.TakeDamage(_instantDamage);
-            print($"Dealt {_instantDamage} damage to {mb.name}");
+            int damage = _instantDamage * _multiplier;
+            damageable.TakeDamage(damage);
+            print($"Dealt {damage} damage to {mb.name}");
         }
 
         private void ApplyKnockback(Rigidbody2D rb, Vector2 direction, float knockForce)
         {
             //ForceMode2D.Impulse - мгновенное применение силы
             rb.AddForce(direction * knockForce, ForceMode2D.Impulse);
+        }
+
+        public void SetMultiplier(int amount) {
+            _multiplier = amount;
         }
     }
 }
