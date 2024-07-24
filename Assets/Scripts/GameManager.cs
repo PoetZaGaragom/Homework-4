@@ -1,9 +1,18 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
+    public static GameManager Instance { get; private set; }
+    public static event Action OnScoreChanged;
+
+    [SerializeField] private LevelPreviewData[] _levels;
+    private int _currentLevelIndex;
+
+    public int Score { 
+        get { return _score; } 
+    }
     private int _score;
 
     private void Awake() {
@@ -21,6 +30,20 @@ public class GameManager : MonoBehaviour
             );
 
         _score += amount;
-        Debug.Log($"Score: {_score}");
+        OnScoreChanged?.Invoke();
+    }
+
+    public void FinishCurrentLevel() {
+        SceneManager.LoadScene(0);
+        OpenAccessToNextLevel();
+    }
+
+    private void OpenAccessToNextLevel() {
+        if (_currentLevelIndex + 1 != _levels.Length)
+            _levels[_currentLevelIndex + 1].IsAccesible = true;
+    }
+
+    public void SetLevelIndex(int newIndex) {
+        _currentLevelIndex = newIndex;
     }
 }
